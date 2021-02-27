@@ -14,8 +14,7 @@ class Sample {
     }
 
     play(vol, pan) {
-        vol = 5
-        
+        if (vol == 0) vol = 15;
         let gain = audioCtx.createGain()
         gain.connect(audioCtx.destination);
         gain.gain.value = vol / 15;
@@ -27,11 +26,19 @@ class Sample {
     }
 }
 
+class LongNote {
+    constructor(col) {
+        this.col = col;
+        this.counter = 1;
+    }
+}
+
 class PlayNoteEvent {
-    constructor(col, type, sample) {
+    constructor(col, type, sample, volume) {
         this.col = col;
         this.type = type;
         this.sample = sample;
+        this.volume = volume
     }
 }
 
@@ -45,6 +52,7 @@ class Chart {
         this.delay = 0;
         this.measure = -1;
         this.stopflag = false;
+        this.reactionWindowScale = 0.5;
 
         this.measure_callback = function () { }
     }
@@ -66,24 +74,38 @@ class Chart {
     }
 
     async start() {
-        for (let i = 1; i < this.measure_count; i++) {
+        for (let i = 0; i < this.measure_count; i++) {
+            let playPacks = [];
+            let bgPacks = [];
+            let bpmChanges;
             if (this.stopflag) break;
             if (i in this.notes) {
                 for (let ii = 0; ii < this.notes[i].length; ii++) {
                     let pack = this.notes[i][ii];
                     if (pack.channel == 0);//IGNORE: measure fraction. no idea how to implement this
-                    else if (pack.channel == 1) this.handleBpmChanges(pack.events, this.delay);
-                    else if (pack.channel >= 2 && pack.channel <= 8) this.handlePlayEvents(pack.events, pack.channel);
-                    else this.handleBgEvents(pack.events);
+                    else if (pack.channel >= 2 && pack.channel <= 8) playPacks.push(pack);
+                    else if (pack.channel >= 9 && pack.channel <= 22) bgPacks.push(pack);
+                    else if (pack.channel == 1) bpmChanges = pack.events;
                 }
             }
-            await sleep(this.delay * 1000);
+            let delay = this.delay;
+
+            if (bpmChanges) this.handleBpmChanges(bpmChanges, this.delay);
+            await this.dispatchEvents(playPacks, bgPacks, delay);
+
             console.log(`measure ${i} bpm ${this.bpm}`);
         }
     }
 
-    async handleBgEvents(evList) {
-        let delay = (this.delay / evList.length) * 1000;
+    async dispatchEvents(playPacks, bgPacks, delay) {
+        for (let _ = 0; _ < playPacks.length; _++) this.handlePlayEvents(playPacks[_].events, playPacks[_].channel);
+        await sleep(delay * (1 - this.reactionWindowScale) * 1000);
+        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
+        await sleep(delay * (this.reactionWindowScale) * 1000);
+    }
+
+    async handleBgEvents(evList, _delay) {
+        let delay = (_delay / evList.length) * 1000;
         for (let i = 0; i < evList.length; i++) {
             let ev = evList[i];
             if (ev.note_type == 4) ev.value += 1000;
@@ -97,12 +119,11 @@ class Chart {
 
     handlePlayEvents(evList, channel) {
         let evs = [];
-        evList.forEach(ev => evs.push(new PlayNoteEvent(channel - 1, ev.note_type, ev.value)));
+        evList.forEach(ev => evs.push(new PlayNoteEvent(channel - 1, ev.note_type, ev.value, ev.volume)));
         this.event_callback(evs);
     }
 
     async handleBpmChanges(evList, delay) {
-        console.log(evList);
         delay = (delay / evList.length) * 1000;
         for (let i = 0; i < evList.length; i++) {
             let bpm = evList[i];
@@ -118,6 +139,10 @@ class Chart {
     setBpm(bpm) {
         this.bpm = bpm;
         this.delay = 240 / this.bpm;
+    }
+
+    getDelay() {
+        return 240 / this.bpm;
     }
 
     setMeasureCallback(callback) {

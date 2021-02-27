@@ -2,6 +2,7 @@ from struct import unpack
 from collections import namedtuple
 from json import JSONEncoder
 from base64 import b64encode
+from sys import argv
 
 def set_bit(value, bit):
     return value | (1<<bit)
@@ -9,7 +10,7 @@ def set_bit(value, bit):
 def clear_bit(value, bit):
     return value & ~(1<<bit)
 
-f = open("C:\\Users\\mario\\Desktop\\o2ma503.ojn", "rb")
+f = open(input(), "rb")
 
 ojn_header = namedtuple("ojn_header", """
 songid signature encode_version genre bpm level1 level2 level3 level_cover event_count1
