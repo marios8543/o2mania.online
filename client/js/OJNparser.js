@@ -26,19 +26,19 @@ class Sample {
     }
 }
 
-class LongNote {
-    constructor(col) {
-        this.col = col;
-        this.counter = 1;
-    }
-}
-
-class PlayNoteEvent {
+class NoteEvent {
     constructor(col, type, sample, volume) {
         this.col = col;
         this.type = type;
         this.sample = sample;
         this.volume = volume
+    }
+}
+
+class LongNoteEvent extends NoteEvent {
+    constructor(start, ...args) {
+        super(...args);
+        this.start = start;
     }
 }
 
@@ -75,6 +75,7 @@ class Chart {
 
     async start() {
         for (let i = 0; i < this.measure_count; i++) {
+
             let playPacks = [];
             let bgPacks = [];
             let bpmChanges;
@@ -89,19 +90,24 @@ class Chart {
                 }
             }
             let delay = this.delay;
-
-            if (bpmChanges) this.handleBpmChanges(bpmChanges, this.delay);
+/*
+            if (bpmChanges) {
+                this.dispatchEvents(playPacks, bgPacks, this.delay);
+                await this.handleBpmChanges(bpmChanges);
+            }
+            else await this.dispatchEvents(playPacks, bgPacks, this.delay);
+*/
+            if (bpmChanges) this.handleBpmChanges(bpmChanges);
             await this.dispatchEvents(playPacks, bgPacks, delay);
-
             console.log(`measure ${i} bpm ${this.bpm}`);
         }
     }
 
     async dispatchEvents(playPacks, bgPacks, delay) {
         for (let _ = 0; _ < playPacks.length; _++) this.handlePlayEvents(playPacks[_].events, playPacks[_].channel);
-        await sleep(delay * (1 - this.reactionWindowScale) * 1000);
-        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
         await sleep(delay * (this.reactionWindowScale) * 1000);
+        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
+        await sleep(delay * (1 - this.reactionWindowScale) * 1000);
     }
 
     async handleBgEvents(evList, _delay) {
@@ -119,16 +125,20 @@ class Chart {
 
     handlePlayEvents(evList, channel) {
         let evs = [];
-        evList.forEach(ev => evs.push(new PlayNoteEvent(channel - 1, ev.note_type, ev.value, ev.volume)));
+        evList.forEach(ev => {
+            ev.col--;
+            if (ev.note_type == 2) evs.push(new LongNoteEvent(true, channel - 2, ev.note_type, ev.value, ev.volume));
+            else if (ev.note_type == 3) evs.push(new LongNoteEvent(false, channel - 2, ev.note_type, ev.value, ev.volume));
+            else evs.push(new NoteEvent(channel - 2, ev.note_type, ev.value, ev.volume));
+        });
         this.event_callback(evs);
     }
 
-    async handleBpmChanges(evList, delay) {
-        delay = (delay / evList.length) * 1000;
+    async handleBpmChanges(evList) {
         for (let i = 0; i < evList.length; i++) {
             let bpm = evList[i];
             if (bpm != 0) this.setBpm(bpm);
-            await sleep(delay);
+            await sleep((this.delay / evList.length) * 1000);
         }
     }
 

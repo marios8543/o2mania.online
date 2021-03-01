@@ -45,4 +45,8 @@ class Renderer {
         this.drawList[d] = func;
         return d;
     }
+
+    removeDrawable(id) {
+        delete this.drawList[id];
+    }
 }

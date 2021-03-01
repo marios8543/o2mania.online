@@ -10,8 +10,6 @@ def set_bit(value, bit):
 def clear_bit(value, bit):
     return value & ~(1<<bit)
 
-f = open(input(), "rb")
-
 ojn_header = namedtuple("ojn_header", """
 songid signature encode_version genre bpm level1 level2 level3 level_cover event_count1
 event_count2 event_count3 note_count1 note_count2 note_count3 measure_count1 measure_count2
@@ -29,46 +27,51 @@ package_header_format_string = "i h h"
 note_event = namedtuple("note_event", "value volume_pan note_type")
 note_event_format_string = "h c b"
 
-def parse_note_event():
-    value, volume_pan, note_type = unpack(note_event_format_string, f.read(4))
-    volume = 0
-    pan = 0
-    volume_pan = int.from_bytes(volume_pan, "little")
-    if not value == 0:
-        value -= 1
-    for i in range(4):
-        if (volume_pan >> i) & 1:
-            volume = set_bit(volume, i)
-        if (volume_pan >> 4+i) & 1:
-            pan = set_bit(pan, i)
-    return {"value" : value, "volume": volume, "pan": pan, "note_type": note_type}
+class OJNParser:
+    def __init__(self, path):
+        self.f = open(path, "rb")
+        self.chart_dict = None
 
-def parse_package():
-    measure, channel, events = unpack(package_header_format_string, f.read(8))
-    event_list = []
-    for _ in range(events):
-        if channel == 1:
-            event_list.append(unpack("f", f.read(4))[0])
-        else:
-            event_list.append(parse_note_event())
-    return {"measure": measure, "channel": channel, "events": event_list}
+    def _parse_note_event(self):
+        value, volume_pan, note_type = unpack(note_event_format_string, self.f.read(4))
+        volume = 0
+        pan = 0
+        volume_pan = int.from_bytes(volume_pan, "little")
+        if not value == 0:
+            value -= 1
+        for i in range(4):
+            if (volume_pan >> i) & 1:
+                volume = set_bit(volume, i)
+            if (volume_pan >> 4+i) & 1:
+                pan = set_bit(pan, i)
+        return {"value" : value, "volume": volume, "pan": pan, "note_type": note_type}
 
-chart_header = ojn_header._make(unpack(ojn_header_format_string, f.read(300)))._asdict()
+    def _parse_package(self):
+        measure, channel, events = unpack(package_header_format_string, self.f.read(8))
+        event_list = []
+        for _ in range(events):
+            if channel == 1:
+                event_list.append(unpack("f", self.f.read(4))[0])
+            else:
+                event_list.append(self._parse_note_event())
+        return {"measure": measure, "channel": channel, "events": event_list}
 
-f.seek(chart_header["note_offset1"])
-dif_easy = [parse_package() for i in range(chart_header["package_count1"])]
-
-f.seek(chart_header["note_offset2"])
-dif_normal = [parse_package() for i in range(chart_header["package_count2"])]
-
-f.seek(chart_header["note_offset3"])
-dif_hard = [parse_package() for i in range(chart_header["package_count3"])]
-
-chart_dict = dict(chart_header)
-chart_dict["notes"] = []
-chart_dict["notes"].append(dif_easy)
-chart_dict["notes"].append(dif_normal)
-chart_dict["notes"].append(dif_hard)
+    def parse(self):
+        if self.chart_dict:
+            return self.chart_dict
+        chart_header = ojn_header._make(unpack(ojn_header_format_string, self.f.read(300)))._asdict()
+        self.f.seek(chart_header["note_offset1"])
+        dif_easy = [self._parse_package() for i in range(chart_header["package_count1"])]
+        self.f.seek(chart_header["note_offset2"])
+        dif_normal = [self._parse_package() for i in range(chart_header["package_count2"])]
+        self.f.seek(chart_header["note_offset3"])
+        dif_hard = [self._parse_package() for i in range(chart_header["package_count3"])]
+        self.chart_dict = dict(chart_header)
+        self.chart_dict["notes"] = []
+        self.chart_dict["notes"].append(dif_easy)
+        self.chart_dict["notes"].append(dif_normal)
+        self.chart_dict["notes"].append(dif_hard)
+        return self.chart_dict
 
 class CJSONEncoder(JSONEncoder):
     def default(self, obj):
@@ -76,10 +79,8 @@ class CJSONEncoder(JSONEncoder):
             return str(obj)
         return JSONEncoder.default(self, obj)
 
-for i in ['title', 'artist', 'ojm_file', 'noter']:
-    chart_dict[i] = chart_dict[i].decode("windows-1252")
-    chart_dict[i] = chart_dict[i].replace("\\u0000", "")
-
-f2 = open("chart.json", "w+")
-f2.write(CJSONEncoder().encode(chart_dict))
-f2.close()
+if __name__ == '__main__':
+    chart = OJNParser(input("Enter the OJN file path\n"))
+    f2 = open(input("Enter the output file path (Should end in json)"), "w+")
+    f2.write(CJSONEncoder().encode(chart.parse()))
+    f2.close()
