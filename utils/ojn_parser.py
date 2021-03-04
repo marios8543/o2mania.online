@@ -80,7 +80,8 @@ class CJSONEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 if __name__ == '__main__':
-    chart = OJNParser(input("Enter the OJN file path\n"))
-    f2 = open(input("Enter the output file path (Should end in json)"), "w+")
+    path = input("Enter the OJN file path\n")
+    chart = OJNParser(path)
+    f2 = open("chart.json", "w+")
     f2.write(CJSONEncoder().encode(chart.parse()))
     f2.close()
