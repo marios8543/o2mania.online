@@ -2,8 +2,8 @@ document.getElementById("mainCanvas").setAttribute("height", window.innerHeight 
 const HEIGHT = window.innerHeight - 20;
 const WIDTH = 480;
 const SCALING = 2.13;
-const boundKeys = [65, 83, 68, 32, 74, 75, 76];
 const canvas = new Renderer();
+const boundKeys = ["KeyA", "KeyS", "KeyD", "Space", "KeyJ", "KeyK", "KeyL"];
 const skin = {
     keys: {
         resource: "keypad.png",
@@ -36,3 +36,5 @@ skin.keys.limits.forEach(key => {
         noteImages[key.notelong].src = `resources/skin/${key.notelong}`;
     }
 });
+
+let SPEED = 3;

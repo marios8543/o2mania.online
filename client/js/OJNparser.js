@@ -39,6 +39,7 @@ class LongNoteEvent extends NoteEvent {
     constructor(start, ...args) {
         super(...args);
         this.start = start;
+        this.end = !this.start;
     }
 }
 
@@ -54,7 +55,7 @@ class Chart {
         this.stopflag = false;
         this.reactionWindowScale = 0.5;
 
-        this.measure_callback = function () { }
+        this.event_callback = function () { }
     }
 
     async initialize(difficulty) {
@@ -153,9 +154,5 @@ class Chart {
 
     getDelay() {
         return 240 / this.bpm;
-    }
-
-    setMeasureCallback(callback) {
-        this.event_callback = callback;
     }
 }

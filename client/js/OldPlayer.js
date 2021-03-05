@@ -16,16 +16,16 @@ function unlightCol(colIdx) {
 
 const downEffectIds = [-1, -1, -1, -1, -1, -1];
 document.onkeydown = function (e) {
-    if (boundKeys.includes(e.keyCode)) {
-        let colIdx = boundKeys.indexOf(e.keyCode);
+    if (boundKeys.includes(e.code)) {
+        let colIdx = boundKeys.indexOf(e.code);
         if (colSamples[colIdx] && (downEffectIds[colIdx] == -1)) colSamples[colIdx].play(colVolumes[colIdx]);
         lightCol(colIdx);
     }
-    if (e.keyCode == 80) chart.start();
+    if (e.code == 80) chart.start();
 }
 document.onkeyup = function (e) {
-    if (boundKeys.includes(e.keyCode)) {
-        let colIdx = boundKeys.indexOf(e.keyCode);
+    if (boundKeys.includes(e.code)) {
+        let colIdx = boundKeys.indexOf(e.code);
         unlightCol(colIdx);
     }
 }
@@ -44,7 +44,7 @@ chart.initialize(1).then(() => {
     let mps;
     let pps;
 
-    chart.setMeasureCallback(async function (evs) {
+    chart.event_callback = async function (evs) {
 
         droppingNotes[canvas.addDrawable(lineImage, 0, 0, width = 0.1)] = false;
         for (let i = 0; i < evs.length; i++) {
@@ -53,16 +53,17 @@ chart.initialize(1).then(() => {
                 let l = skin.keys.limits[ev.col];
                 colSamples[ev.col] = chart.samples[ev.sample];
                 colVolumes[ev.col] = ev.volume;
-                let drw = canvas.addDrawable(noteImages[l.note], l.start * SCALING, 0);
-                droppingNotes[drw] = false;
+                let height = 1;
                 if (ev instanceof LongNoteEvent) {
-                    if (!(drw in longNotes)) longNotes[drw] = ev;
-                    longNotes[drw].counter++;
+                    let length = (evs.findIndex((_) => (_ instanceof LongNoteEvent && _.end)) || evs.length) - i;
+                    height = measurePx / length;
                 }
+                let drw = canvas.addDrawable(noteImages[l.note], l.start * SCALING, 0, 0, 1, height);
+                droppingNotes[drw] = false;
             }
             await sleep((chart.delay / evs.length) * 1000);
         }
-    });
+    }
 
     function getScrollPx() {
         return (SCROLL_RATE / 1000) * pps;
@@ -77,7 +78,7 @@ chart.initialize(1).then(() => {
                 if (longNotes[note]) {
                     if (longNotes[note].start) canvas.drawList[note].height = measurePx / longNotes[note].counter;
                 }
-                canvas.drawList[note].y += getScrollPx() //- canvas.drawList[note].height;
+                canvas.drawList[note].y += getScrollPx() - canvas.drawList[note].height;
                 if (canvas.drawList[note].y > SCROLL_BOTTOM) {
                     delete canvas.drawList[note];
                     delete droppingNotes[note];
