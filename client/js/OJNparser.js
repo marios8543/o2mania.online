@@ -1,5 +1,6 @@
 const fetch = window.fetch.bind(window);
 const audioCtx = new window.AudioContext()
+let GLOBAL_VOLUME = 0.5;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -10,14 +11,14 @@ class Sample {
         let bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
         audioCtx.decodeAudioData(bytes.buffer).then(buf => {
             this.buffer = buf;
-        })
+        });
     }
 
     play(vol, pan) {
         if (vol == 0) vol = 15;
         let gain = audioCtx.createGain()
         gain.connect(audioCtx.destination);
-        gain.gain.value = vol / 15;
+        gain.gain.value = (vol / 15) * GLOBAL_VOLUME;
 
         let source = audioCtx.createBufferSource();
         source.buffer = this.buffer;
@@ -27,11 +28,18 @@ class Sample {
 }
 
 class NoteEvent {
-    constructor(col, type, sample, volume) {
+    constructor(col, type, sample, volume, chart) {
         this.col = col;
         this.type = type;
         this.sample = sample;
         this.volume = volume
+        this.chart = chart;
+    }
+
+    play() {
+        if (this.sample == 2) return;
+        if (this.chart.samples[this.sample])
+        this.chart.samples[this.sample].play(this.volume);
     }
 }
 
@@ -52,10 +60,13 @@ class Chart {
         this.bpm = 0;
         this.delay = 0;
         this.measure = -1;
-        this.stopflag = false;
         this.reactionWindowScale = 0.5;
 
-        this.event_callback = function () { }
+        this.event_callback = function () {}
+
+        this.stopflag = false;
+        this.noPlayerEvents = false;
+        this.noBgEvents = false;
     }
 
     async initialize(difficulty) {
@@ -76,7 +87,6 @@ class Chart {
 
     async start() {
         for (let i = 0; i < this.measure_count; i++) {
-
             let playPacks = [];
             let bgPacks = [];
             let bpmChanges;
@@ -106,9 +116,9 @@ class Chart {
 
     async dispatchEvents(playPacks, bgPacks, delay) {
         for (let _ = 0; _ < playPacks.length; _++) this.handlePlayEvents(playPacks[_].events, playPacks[_].channel);
-        await sleep(delay * (this.reactionWindowScale) * 1000);
-        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
         await sleep(delay * (1 - this.reactionWindowScale) * 1000);
+        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
+        await sleep(delay * (this.reactionWindowScale) * 1000);
     }
 
     async handleBgEvents(evList, _delay) {
@@ -118,7 +128,7 @@ class Chart {
             if (ev.note_type == 4) ev.value += 1000;
             if (ev.value != 0 && ev.note_type != 3) {
                 let sample = this.samples[ev.value];
-                if (sample) sample.play(ev.volume, 0);
+                if (sample && !this.noBgEvents) sample.play(ev.volume, 0);
             }
             await sleep(delay);
         }
@@ -128,9 +138,9 @@ class Chart {
         let evs = [];
         evList.forEach(ev => {
             ev.col--;
-            if (ev.note_type == 2) evs.push(new LongNoteEvent(true, channel - 2, ev.note_type, ev.value, ev.volume));
-            else if (ev.note_type == 3) evs.push(new LongNoteEvent(false, channel - 2, ev.note_type, ev.value, ev.volume));
-            else evs.push(new NoteEvent(channel - 2, ev.note_type, ev.value, ev.volume));
+            if (ev.note_type == 2) evs.push(new LongNoteEvent(true, channel - 2, ev.note_type, ev.value, ev.volume, this));
+            else if (ev.note_type == 3) evs.push(new LongNoteEvent(false, channel - 2, ev.note_type, ev.value, ev.volume, this));
+            else evs.push(new NoteEvent(channel - 2, ev.note_type, ev.value, ev.volume, this));
         });
         this.event_callback(evs);
     }

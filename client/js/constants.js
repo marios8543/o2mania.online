@@ -37,4 +37,6 @@ skin.keys.limits.forEach(key => {
     }
 });
 
+const REACT_START_LINE_PERCENT = 0.6;
 let SPEED = 3;
+let autoPlay = true;
