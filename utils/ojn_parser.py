@@ -3,6 +3,7 @@ from collections import namedtuple
 from json import JSONEncoder
 from base64 import b64encode
 from sys import argv
+from os import path
 
 def set_bit(value, bit):
     return value | (1<<bit)
@@ -67,10 +68,10 @@ class OJNParser:
         self.f.seek(chart_header["note_offset3"])
         dif_hard = [self._parse_package() for i in range(chart_header["package_count3"])]
         self.chart_dict = dict(chart_header)
-        self.chart_dict["notes"] = []
-        self.chart_dict["notes"].append(dif_easy)
-        self.chart_dict["notes"].append(dif_normal)
-        self.chart_dict["notes"].append(dif_hard)
+        #self.chart_dict["notes"] = []
+        #self.chart_dict["notes"].append(dif_easy)
+        #self.chart_dict["notes"].append(dif_normal)
+        #self.chart_dict["notes"].append(dif_hard)
         return self.chart_dict
 
 class CJSONEncoder(JSONEncoder):
@@ -80,8 +81,11 @@ class CJSONEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 if __name__ == '__main__':
-    path = input("Enter the OJN file path\n")
-    chart = OJNParser(path)
-    f2 = open("chart.json", "w+")
-    f2.write(CJSONEncoder().encode(chart.parse()))
+    in_path = argv[0] or input("Enter the OJN file path\n")
+    chart = OJNParser(in_path)
+    out_path = argv[1] or input("Enter the output path\n")
+    f2 = open(path.join(out_path, "cover.jpeg"), "w+b")
+    dc = chart.parse()
+    chart.f.seek(dc['file_version'])
+    f2.write(chart.f.read())
     f2.close()

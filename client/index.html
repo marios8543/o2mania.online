@@ -1,17 +1,97 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>O2Jamu</title>
   <meta name="description" content="">
   <meta name="author" content="tza">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/player-box-gradients.css">
+  <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css">
+  <style>
+  </style>
 </head>
-<body style="background-color: black;">
-  <canvas width="480" id="mainCanvas"></canvas>
-  <script src="js/Renderer.js"></script>
-  <script src="js/constants.js"></script>
-  <script src="js/OjnParser.js"></script>
-  <script src="js/ChartPlayer.js"></script>
+
+<body>
+  <div id="mainWrap" class="container mx-auto ">
+    <div style="margin: 0 auto;">
+      <div class="grid grid-flow-col auto-cols-max">
+        <div>
+          <div class="playerRow">
+            <div class="grid grid-flow-col auto-cols-max">
+              <div v-for="i in 4">
+                <div v-if="players[i-1]">
+                  <player-box v-bind:team="players[i-1].team" v-bind:username="players[i-1].getDisplay()"
+                    v-bind:profilepic="players[i-1].profile_pic"></player-box>
+                </div>
+                <div v-else>
+                  <player-box username="" profilepic=""></player-box>
+                </div>
+              </div>
+            </div>
+            <div class="mt-1 grid grid-flow-col auto-cols-max">
+              <div v-for="i in 4">
+                <div v-if="players[3+i]">
+                  <player-box v-bind:team="players[i-1].team" v-bind:username="players[3+i].getDisplay()"
+                    v-bind:profilepic="players[3+i].profile_pic"></player-box>
+                </div>
+                <div v-else>
+                  <player-box username="" profilepic=""></player-box>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-flow-row auto-rows-max messageBox">
+            <ul class="messageList">
+              <li class="pl-2 pt-1" v-for="msg in messages"><b>{{ msg.author }}:</b> {{ msg.content }}</li>
+            </ul>
+            <div class="inputBar">
+              <input type="text" class="messageInput">
+              <button class="shoutButton">SHOUT</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="teamSelectBox">
+            <span>TEAM</span><br>
+            <div class="teamSelectButton">
+              <button v-for="(value, name) in TeamColors" v-bind:style="'background-color: '+value">{{ name }}</button>
+            </div>
+            </button><br>
+            <button class="startButton">START</button>
+          </div>
+          <div class="speedSelectBox">
+            <h2 class="font-bold text-4xl text-white">SPEED</h2>
+            <button class="leftButton speedSelectBoxButton"><</button>
+            <span class="speedIndicator">X{{ speed }}</span>
+            <button class="rightButton speedSelectBoxButton">></button>
+          </div>
+          <div class="speedSelectBox">
+            <span class="font-extrabold text-4xl text-white">♫</span>
+            <button class="selectMusicButton">Select Music</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>const RESOURCE_URL = "https://cdn.o2mania.online/file/o2mania";</script>
+  <script src="js/vue.js"></script>
+  <script src="resources/skin/skin.js"></script>
+  <script src="js/ChartPlayer/Renderer.js"></script>
+  <script src="js/ChartPlayer/OjnParser.js"></script>
+  <script src="js/ChartPlayer/ChartPlayer.js"></script>
+  <script src="js/Components/PlayerBox.js"></script>
+  <script src="js/Misc/DataClasses.js"></script>
+  <script src="js/index.js"></script>
+
+  <script>
+    document.onkeypress = function (e) {
+      if (e.code == 'KeyP') app.$refs.player.start();
+    }
+  </script>
 </body>
+
 </html>
+
+<!--<chart-player ref="player" chartid="o2ma174" difficulty="1"></chart-player>-->

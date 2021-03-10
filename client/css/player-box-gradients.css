@@ -1,0 +1,39 @@
+.A {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, red 85%, red 100%);
+}
+
+.B {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, orange 85%, orange 100%);
+}
+
+.C {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, yellow 85%, yellow 100%);
+}
+
+.D {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, lime 85%, lime 100%);
+}
+
+.E {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, cyan 85%, cyan 100%);
+}
+
+.F {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, blue 85%, blue 100%);
+}
+
+.G {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, purple 85%, purple 100%);
+}
+
+.H {
+  background: rgb(13,108,158);
+  background: linear-gradient(180deg, rgba(13,108,158,1) 0%, rgba(9,49,91,1) 35%, rgba(7,5,41,1) 85%, brown 85%, brown 100%);
+}

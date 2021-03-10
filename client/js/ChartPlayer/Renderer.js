@@ -1,4 +1,5 @@
 let drawableIdIncrementor = 0;
+let SCALING;
 
 class Drawable {
     constructor(image, x, y, z, width , height) {
@@ -29,9 +30,10 @@ class CustomDrawable {
 }
 
 class Renderer {
-    constructor() {
+    constructor(el, scaling) {
         /** @type {CanvasRenderingContext2D} */
-        this.canvas = document.getElementById("mainCanvas").getContext("2d");
+        this.canvas = el.getContext("2d");
+        SCALING = scaling;
         this.drawList = {};
         this._last_time = new Date().getTime();
         this.timeDelta = 0;

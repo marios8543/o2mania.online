@@ -70,11 +70,11 @@ class Chart {
     }
 
     async initialize(difficulty) {
-        let data = await (await fetch(`resources/charts/${this.id}/samples.json`)).json();
+        let data = await (await fetch(`${RESOURCE_URL}/charts/${this.id}/samples.json`)).json();
         for (let i in data) {
             this.samples[i.split(".")[0]] = new Sample(data[i]);
         }
-        data = await (await fetch(`resources/charts/${this.id}/chart.json`)).json();
+        data = await (await fetch(`${RESOURCE_URL}/charts/${this.id}/chart.json`)).json();
         this.measure_count = data[`measure_count${difficulty + 1}`];
         this.setBpm(data.bpm);
 
@@ -86,6 +86,7 @@ class Chart {
     }
 
     async start() {
+        this.stopflag = false;
         for (let i = 0; i < this.measure_count; i++) {
             let playPacks = [];
             let bgPacks = [];
@@ -114,12 +115,22 @@ class Chart {
         }
     }
 
+    
     async dispatchEvents(playPacks, bgPacks, delay) {
         for (let _ = 0; _ < playPacks.length; _++) this.handlePlayEvents(playPacks[_].events, playPacks[_].channel);
         await sleep(delay * (1 - this.reactionWindowScale) * 1000);
         for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
         await sleep(delay * (this.reactionWindowScale) * 1000);
     }
+
+    /*
+    async dispatchEvents(playPacks, bgPacks, delay) {
+        for (let _ = 0; _ < playPacks.length; _++) this.handlePlayEvents(playPacks[_].events, playPacks[_].channel);
+        await sleep((this.reactionWindowScale) * 1000);
+        for (let _ = 0; _ < bgPacks.length; _++) this.handleBgEvents(bgPacks[_].events, delay);
+        await sleep((delay - this.reactionWindowScale) * 1000);
+    }
+    */
 
     async handleBgEvents(evList, _delay) {
         let delay = (_delay / evList.length) * 1000;
