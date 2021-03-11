@@ -305,3 +305,35 @@ button:hover {
   margin-right: 5px;
   padding-bottom: 0.25rem;
 }
+
+.songSelectModal {
+  width: 55rem;
+  height: 30rem;
+  background-color: rgba(135, 206, 250, 0.95);
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0.5rem;
+}
+
+.genreList {
+  width: fit-content;
+  background: rgb(0,56,184);
+  background: linear-gradient(90deg, rgba(0,56,184,0.6923144257703081) 0%, rgba(29,179,241,0.8379726890756303) 31%, rgba(0,56,184,0.7343312324929971) 78%);
+  border-width: 2px;
+  border-color: black;
+  border-radius: 0.3rem;
+  margin-left: 1rem;
+  margin-top: 2rem;
+}
+
+.genreList > li {
+  border-color: rgba(0, 0, 0, 0.3);
+  font-size: x-large;
+  font-weight: bolder;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
