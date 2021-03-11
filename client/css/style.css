@@ -1,5 +1,15 @@
 body {
-  background-color: darkslateblue;
+  background-color: black;
+}
+
+.allVisibleText {
+  color: #fff;
+  text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+button:hover {
+  color: rgba(255, 255, 255, 1);
+  box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
 }
 
 .bg {
@@ -14,6 +24,55 @@ body {
   position: fixed;
   top: 0;
   left: 0;
+}
+
+.topBar {
+  width: 85%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  height: 2.5rem;
+  background-color: rgba(0,0,0,0.5);
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  border-color: silver;
+  border-width: 3px;
+  border-bottom-width: 0;
+}
+
+.roomStuff {
+  position: absolute;
+  margin-top: 0.25rem;
+  margin-left: 5%;
+}
+
+.roomStuff > input {
+  width: 15rem;
+  background-color: rgba(128, 128, 128, 0.5);
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-width: 2px;
+  border-color: black;
+  color:white;
+}
+
+.roomStuff > button {
+  background-color: skyblue;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  height: 100%;
+  font-weight: bold;
+  padding-right: 3px;
+  padding-left: 2px;
+}
+
+.songView {
+  margin-left: 70%;
+  background-color: rgba(0, 255, 0, 0.5);
+  border-top-right-radius: 1rem;
+  height: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  padding:5px;
 }
 
 .loadingMsgBar {
@@ -41,6 +100,7 @@ body {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: fit-content;
   padding: 0.7rem;
+  padding-bottom: 1.05rem;
   border-radius: 0.5rem;
   border-color: silver;
   border-width: 3px;
@@ -66,7 +126,8 @@ body {
   max-width: 100%;
   max-height: 100%;
   object-fit: fill;
-  margin: 0 auto;
+  margin-top: 25%;
+  margin-left: 5%;
 }
 
 .playerBoxUsername {
@@ -153,6 +214,7 @@ body {
   padding-bottom: 1rem;
   border-radius: 0.5rem;
   margin-right: 0.5rem;
+  line-height: 1;
 }
 
 .teamSelectButton > button {
@@ -241,4 +303,5 @@ body {
   padding-left: 5px;
   padding-right: 5px;
   margin-right: 5px;
+  padding-bottom: 0.25rem;
 }

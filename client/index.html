@@ -14,75 +14,82 @@
 </head>
 
 <body>
-  <div id="mainWrap" class="container mx-auto ">
-    <div style="margin: 0 auto;">
-      <div class="grid grid-flow-col auto-cols-max">
-        <div>
-          <div class="playerRow">
-            <div class="grid grid-flow-col auto-cols-max">
-              <div v-for="i in 4">
-                <div v-if="players[i-1]">
-                  <player-box v-bind:team="players[i-1].team" v-bind:username="players[i-1].getDisplay()"
-                    v-bind:profilepic="players[i-1].profile_pic"></player-box>
-                </div>
-                <div v-else>
-                  <player-box username="" profilepic=""></player-box>
-                </div>
-              </div>
-            </div>
-            <div class="mt-1 grid grid-flow-col auto-cols-max">
-              <div v-for="i in 4">
-                <div v-if="players[3+i]">
-                  <player-box v-bind:team="players[i-1].team" v-bind:username="players[3+i].getDisplay()"
-                    v-bind:profilepic="players[3+i].profile_pic"></player-box>
-                </div>
-                <div v-else>
-                  <player-box username="" profilepic=""></player-box>
+  <div id="mainWrap" class="container mx-auto">
+    <div class="grid grid-flow-row auto-rows-max justify-center">
+      <div>
+        <div class="topBar">
+          <div class="roomStuff">
+            <input type="text" class="roomName" v-model="roomName">
+            <button v-bind:disabled="!isHost">Rename room</button>
+          </div>
+          <div class="songView">
+            <span class="allVisibleText">{{ currentSong.title }} (BPM: {{ currentSong.bpm }})</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="grid grid-flow-col auto-cols-max">
+          <div>
+            <div class="playerRow">
+              <div class="grid grid-cols-4">
+                <div v-for="i in 8">
+                  <div v-if="players[i-1]">
+                    <player-box v-bind:ref="'player'+(i-1)" v-bind:team="players[i-1].team"
+                      v-bind:username="players[i-1].getDisplay()" v-bind:profilepic="players[i-1].profile_pic">
+                    </player-box>
+                  </div>
+                  <div v-else>
+                    <player-box username="" profilepic=""></player-box>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="grid grid-flow-row auto-rows-max messageBox">
-            <ul class="messageList">
-              <li class="pl-2 pt-1" v-for="msg in messages"><b>{{ msg.author }}:</b> {{ msg.content }}</li>
-            </ul>
-            <div class="inputBar">
-              <input type="text" class="messageInput">
-              <button class="shoutButton">SHOUT</button>
+          <div>
+            <div class="teamSelectBox">
+              <span>TEAM</span><br>
+              <div class="teamSelectButton">
+                <button class="allVisibleText" v-for="(value, name) in TeamColors" v-bind:style="'background-color: '+value">{{ name }}</button>
+              </div>
+              </button><br>
+              <button class="startButton">START</button>
+            </div>
+            <div class="speedSelectBox">
+              <h2 class="font-bold text-4xl text-white">SPEED</h2>
+              <button v-on:click="speed > 1 ? speed-- : null" class="leftButton speedSelectBoxButton"><</button>
+              <span class="speedIndicator">X{{ speed }}</span>
+              <button v-on:click="maxSpeed >= speed + 1 ? speed++ : null" class="rightButton speedSelectBoxButton">></button>
+            </div>
+            <div class="speedSelectBox">
+              <span class="font-extrabold text-4xl text-white">♫</span>
+              <button v-bind:disabled="!isHost" class="selectMusicButton">Select Music</button>
             </div>
           </div>
         </div>
-        <div>
-          <div class="teamSelectBox">
-            <span>TEAM</span><br>
-            <div class="teamSelectButton">
-              <button v-for="(value, name) in TeamColors" v-bind:style="'background-color: '+value">{{ name }}</button>
-            </div>
-            </button><br>
-            <button class="startButton">START</button>
-          </div>
-          <div class="speedSelectBox">
-            <h2 class="font-bold text-4xl text-white">SPEED</h2>
-            <button class="leftButton speedSelectBoxButton"><</button>
-            <span class="speedIndicator">X{{ speed }}</span>
-            <button class="rightButton speedSelectBoxButton">></button>
-          </div>
-          <div class="speedSelectBox">
-            <span class="font-extrabold text-4xl text-white">♫</span>
-            <button class="selectMusicButton">Select Music</button>
+      </div>
+      <div>
+        <div class="grid grid-flow-row auto-rows-max messageBox">
+          <ul class="messageList">
+            <li class="pl-2 pt-1" v-for="msg in messages"><b>{{ msg.author }}:</b> {{ msg.content }}</li>
+          </ul>
+          <div class="inputBar">
+            <input type="text" class="messageInput">
+            <button class="shoutButton">SHOUT</button>
           </div>
         </div>
       </div>
     </div>
   </div>
   <script>const RESOURCE_URL = "https://cdn.o2mania.online/file/o2mania";</script>
-  <script src="js/vue.js"></script>
+  <script src="https://cdn.o2mania.online/file/o2mania/static/js/vue.js"></script>
   <script src="resources/skin/skin.js"></script>
+<!--
   <script src="js/ChartPlayer/Renderer.js"></script>
   <script src="js/ChartPlayer/OjnParser.js"></script>
   <script src="js/ChartPlayer/ChartPlayer.js"></script>
+-->
   <script src="js/Components/PlayerBox.js"></script>
-  <script src="js/Misc/DataClasses.js"></script>
+  <script src="js/Utils/DataClasses.js"></script>
   <script src="js/index.js"></script>
 
   <script>

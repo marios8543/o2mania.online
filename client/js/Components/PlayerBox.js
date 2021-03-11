@@ -3,7 +3,7 @@ const PlayerBoxComponent = {
     template: `
     <div v-bind:class="'playerBox col-span '+team">
     <img v-bind:src="profilepic" class="playerImage">
-    <span class="playerBoxUsername"><a>{{ username }}</a></span>
+    <span class="allVisibleText playerBoxUsername"><a>{{ username }}</a></span>
     </div>
     `,
     data: function() {

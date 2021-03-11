@@ -1,24 +1,32 @@
 const app = new Vue({
     el: "#mainWrap",
     components: {
-        "chart-player": ChartPlayerComponent,
+       // "chart-player": ChartPlayerComponent,
         "player-box": PlayerBoxComponent
     },
     data: {
+        roomName: "",
         speed: 0,
-        TeamColors : {
-            A: "red",
-            B: "orange",
-            C: "yellow",
-            D: "lime",
-            E: "cyan",
-            F: "blue",
-            G: "purple",
-            H: "brown"
+        maxSpeed: 5,
+        isHost: false,
+        currentSong: {
+            id: "o2ma100",
+            title: "Bach Alive",
+            bpm: 170
         },
+        TeamColors : {A: "red", B: "orange", C: "yellow", D: "lime", E: "cyan", F: "blue", G: "purple", H: "brown"},
         players: [
             new Player("Test-kun", "https://sh.tzatzikiweeb.moe/mikuspin.gif", 89, "B")
         ],
-        messages: [new Message("Test-kun", "Fuck joggers")]
+        messages: [
+            new Message("Test-kun", "Fuck joggers")
+        ],
+        resources: RESOURCE_URL
+    },
+    methods: {
+
+    },
+    mounted: function() {
+
     }
 })
