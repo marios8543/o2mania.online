@@ -126,23 +126,23 @@ const ChartPlayerComponent = {
         }
     },
     mounted: function() {
-        document.getElementById("chart_bg").style.backgroundImage = `url("${RESOURCE_URL}/charts/${this.chartid}/cover.jpeg")`;
+        document.getElementById("chart_bg").style.backgroundImage = `url("${CDN}/charts/${this.chartid}/cover.jpeg")`;
         document.getElementById("mainCanvas").setAttribute("height", window.innerHeight - 20);
         this.canvas = new Renderer(document.getElementById("mainCanvas"), this.SCALING);
-        this.keyImage.src = `${RESOURCE_URL}/skin/${skin.keys.resource}`;
+        this.keyImage.src = `${CDN}/skin/${skin.keys.resource}`;
         this.keyImage.onload = initKeypad.bind(this)
         function initKeypad() {
             this.canvas.addDrawable(this.keyImage, 0, this.HEIGHT - this.keyImage.height * this.SCALING);
             this.JUDGE_LINE = (this.HEIGHT - (this.keyImage.height * SCALING));
             this.REACT_LINE = (this.HEIGHT - (this.keyImage.height * SCALING)) * this.REACT_START_LINE_PERCENT;
         }
-        this.lineImage.src = `${RESOURCE_URL}/skin/${skin.line}`;
+        this.lineImage.src = `${CDN}/skin/${skin.line}`;
         skin.keys.limits.forEach(key => {
             if (!(key.note in this.noteImages)) {
                 this.noteImages[key.note] = new Image();
-                this.noteImages[key.note].src = `${RESOURCE_URL}/skin/${key.note}`;
+                this.noteImages[key.note].src = `${CDN}/skin/${key.note}`;
                 this.noteImages[key.notelong] = new Image();
-                this.noteImages[key.notelong].src = `${RESOURCE_URL}/skin/${key.notelong}`;
+                this.noteImages[key.notelong].src = `${CDN}/skin/${key.notelong}`;
             }
         });
 

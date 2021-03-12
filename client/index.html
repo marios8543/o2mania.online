@@ -8,14 +8,14 @@
   <meta name="author" content="tza">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/player-box-gradients.css">
-  <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css">
+  <link rel="stylesheet" href="https://cdn.o2mania.online/file/o2mania/static/css/tailwind.min.css">
   <style>
   </style>
 </head>
 
 <body>
   <div id="mainWrap" class="bg">
-    <div class="container mx-auto">
+    <div v-bind:class="(selectSong ? 'dim' : 'undim') +' container mx-auto'">
       <div class="grid grid-flow-row auto-rows-max justify-center">
         <div>
           <div class="topBar">
@@ -50,20 +50,23 @@
               <div class="teamSelectBox">
                 <span>TEAM</span><br>
                 <div class="teamSelectButton">
-                  <button class="allVisibleText" v-for="(value, name) in TeamColors" v-bind:style="'background-color: '+value">{{ name }}</button>
+                  <button class="allVisibleText" v-for="(value, name) in TeamColors"
+                    v-bind:style="'background-color: '+value">{{ name }}</button>
                 </div>
                 </button><br>
                 <button class="startButton">START</button>
               </div>
               <div class="speedSelectBox">
                 <h2 class="font-bold text-4xl text-white">SPEED</h2>
-                <button v-on:click="speed > 1 ? speed-- : null" class="leftButton speedSelectBoxButton"><</button>
-                <span class="speedIndicator">X{{ speed }}</span>
-                <button v-on:click="maxSpeed >= speed + 1 ? speed++ : null" class="rightButton speedSelectBoxButton">></button>
+                <button v-on:click="speed > 1 ? speed-- : null" class="leftButton speedSelectBoxButton">
+                  <</button>
+                    <span class="speedIndicator">X{{ speed }}</span>
+                    <button v-on:click="maxSpeed >= speed + 1 ? speed++ : null"
+                      class="rightButton speedSelectBoxButton">></button>
               </div>
               <div class="speedSelectBox">
                 <span class="font-extrabold text-4xl text-white">♫</span>
-                <button v-bind:disabled="!isHost" class="selectMusicButton">Select Music</button>
+                <button v-on:click="selectSong = true" v-bind:disabled="!isHost" class="selectMusicButton">Select Music</button>
               </div>
             </div>
           </div>
@@ -73,38 +76,26 @@
             <ul class="messageList">
               <li class="pl-2 pt-1" v-for="msg in messages"><b>{{ msg.author }}:</b> {{ msg.content }}</li>
             </ul>
-            <div class="inputBar">
-              <input type="text" class="messageInput">
+            <div class="inputBar flex">
+              <input type="text" class="messageInput flex-1">
               <button class="shoutButton">SHOUT</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="songSelectModal grid grid-flow-col auto-cols-max">
-      <div>
-        <div class="grid grid-flow-row auto-rows-max messageBox">
-          <ul class="messageList">
-            <li class="pl-2 pt-1" v-for="msg in messages"><b>{{ msg.author }}:</b> {{ msg.content }}</li>
-          </ul>
-          <div class="inputBar flex">
-            <input type="text" class="messageInput flex-1">
-            <button class="shoutButton">SHOUT</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <song-select v-if="selectSong" v-on:close="selectSong = false" v-on:changesong="changeSong" ref="songSelect" v-bind:resources="resources"></song-select>
   </div>
-  <script>const RESOURCE_URL = "https://cdn.o2mania.online/file/o2mania";</script>
+  <script>const CDN = "https://cdn.o2mania.online/file/o2mania";</script>
   <script src="https://cdn.o2mania.online/file/o2mania/static/js/vue.js"></script>
-<!--
   <script src="resources/skin/skin.js"></script>
-  <script src="js/ChartPlayer/Renderer.js"></script>
-  <script src="js/ChartPlayer/OjnParser.js"></script>
-  <script src="js/ChartPlayer/ChartPlayer.js"></script>
--->
-  <script src="js/Components/PlayerBox.js"></script>
+  <script src="js/Components/ChartPlayer/Renderer.js"></script>
+  <script src="js/Components/ChartPlayer/OjnParser.js"></script>
+  <script src="js/Components/ChartPlayer/ChartPlayer.js"></script>
+
   <script src="js/Utils/DataClasses.js"></script>
+  <script src="js/Components/PlayerBox.js"></script>
+  <script src="js/Components/SongSelect.js"></script>
   <script src="js/index.js"></script>
 
   <script>

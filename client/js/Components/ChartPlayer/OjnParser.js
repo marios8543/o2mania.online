@@ -70,11 +70,11 @@ class Chart {
     }
 
     async initialize(difficulty) {
-        let data = await (await fetch(`${RESOURCE_URL}/charts/${this.id}/samples.json`)).json();
+        let data = await (await fetch(`${CDN}/charts/${this.id}/samples.json`)).json();
         for (let i in data) {
             this.samples[i.split(".")[0]] = new Sample(data[i]);
         }
-        data = await (await fetch(`${RESOURCE_URL}/charts/${this.id}/chart.json`)).json();
+        data = await (await fetch(`${CDN}/charts/${this.id}/chart.json`)).json();
         this.measure_count = data[`measure_count${difficulty + 1}`];
         this.setBpm(data.bpm);
 

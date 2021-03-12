@@ -12,6 +12,71 @@ button:hover {
   box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
 }
 
+@keyframes dim-ani {
+  0% {
+    filter: brightness(100%);
+  }
+
+  100% {
+    filter: brightness(20%);
+  }
+}
+
+@keyframes undim-ani {
+  0% {
+    filter: brightness(20%);
+  }
+
+  100% {
+    filter: brightness(100%);
+  }
+}
+
+.dim {
+  animation-name: dim-ani;
+  animation-duration: 0.5s;
+  filter: brightness(20%);
+  pointer-events: none;
+}
+
+.undim {
+  animation-name: undim-ani;
+  animation-duration: 0.5s;
+}
+
+@keyframes fadein-ani {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout-ani {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadein {
+  animation-name: fadein-ani;
+  animation-duration: 0.5s;
+  opacity: 1;
+}
+
+.fadeout {
+  animation-name: fadeout-ani;
+  animation-duration: 0.5s;
+  pointer-events: none;
+  opacity: 0;
+}
+
 .bg {
   background-position: center;
   background-repeat: no-repeat;
@@ -319,6 +384,7 @@ button:hover {
 
 .genreList {
   width: fit-content;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background: rgb(0,56,184);
   background: linear-gradient(90deg, rgba(0,56,184,0.6923144257703081) 0%, rgba(29,179,241,0.8379726890756303) 31%, rgba(0,56,184,0.7343312324929971) 78%);
   border-width: 2px;
@@ -336,4 +402,85 @@ button:hover {
   border-bottom-width: 1px;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.songTable {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display: block;
+  width: 28rem;
+  margin-left: 1rem;
+  margin-top: 2rem;
+  height: 26.36rem;
+  background: rgb(0,56,184);
+  background: linear-gradient(90deg, rgba(0,56,184,0.6923144257703081) 0%, rgba(29,179,241,0.8379726890756303) 31%, rgba(0,56,184,0.7343312324929971) 78%);
+  border-width: 2px;
+  border-radius: 0.5rem;
+  border-color: black;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  table-layout: fixed;
+}
+
+.songTable > .header {
+  background-color: rgba(128, 128, 128, 0.7);
+}
+
+.songCard {
+  background-color: rgba(100, 149, 237, 0.8);
+  width: 15rem;
+  margin-left: 1rem;
+  margin-top: 2rem;
+  padding-bottom: 0.5rem;
+  border-width: 2px;
+  border-radius: 0.5rem;
+  border-color: black;
+}
+
+.songCard > img {
+  padding: 10px;
+  border-radius: 0.5rem;
+}
+
+.songCard > span{
+  display:inline-block;
+}
+
+.difSelect {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 15rem;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  border-width: 2px;
+  border-radius: 0.5rem;
+  border-color: black;
+  background-color: rgb(192, 192, 192, 0.8);
+  text-align: center;
+}
+
+.difSelect > button {
+  width: 3rem;
+  height: 3rem;
+  font-weight: bolder;
+  border-color: black;
+  border-radius: 0.5rem;
+  border-width: 3px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.confirmButtons {
+  text-align: center;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+}
+
+.confirmButtons > button {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: rgb(192, 192, 192, 0.8);
+  border-color: black;
+  border-radius: 0.5rem;
+  border-width: 3px;
+  font-size: large;
 }

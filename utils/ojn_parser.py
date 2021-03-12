@@ -61,6 +61,9 @@ class OJNParser:
         if self.chart_dict:
             return self.chart_dict
         chart_header = ojn_header._make(unpack(ojn_header_format_string, self.f.read(300)))._asdict()
+        chart_header['title'] = chart_header['title'].decode('cp936')
+        chart_header['artist'] = chart_header['artist'].decode('cp936')
+        chart_header['noter'] = chart_header['noter'].decode('cp936')
         self.f.seek(chart_header["note_offset1"])
         dif_easy = [self._parse_package() for i in range(chart_header["package_count1"])]
         self.f.seek(chart_header["note_offset2"])
@@ -81,9 +84,9 @@ class CJSONEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 if __name__ == '__main__':
-    in_path = argv[0] or input("Enter the OJN file path\n")
-    chart = OJNParser(in_path)
-    out_path = argv[1] or input("Enter the output path\n")
+    in_path = argv[1] if len(argv) > 1 else input("Enter the OJN file path\n")
+    chart = OJNParser(in_path).parse()
+    out_path = argv[2] or input("Enter the output path\n")
     f2 = open(path.join(out_path, "cover.jpeg"), "w+b")
     dc = chart.parse()
     chart.f.seek(dc['file_version'])
