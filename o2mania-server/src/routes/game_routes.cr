@@ -36,8 +36,16 @@ get "/game/set_song" do |ctx|
     game, player = get_info ctx
     songid = ctx.params.query["songid"]
     if player.is_host
-        game.set_song songid
-        "OK"
+        begin
+            game.set_song songid
+            "OK"
+        rescue exception
+            if exception.to_s == "invalid_song"
+                ctx.response.respond_with_status(404, "invalid_song")
+            else
+                raise exception
+            end
+        end
     else
         ctx.response.respond_with_status(403, "not_host")
     end
@@ -47,10 +55,12 @@ get "/game/change_team" do |ctx|
     game, player = get_info ctx
     team = ctx.params.query["team"]
     game.set_player_team(player, team.to_i)
+    "OK"
 end
 
 get "/game/message" do |ctx|
     game, player = get_info ctx
     message = ctx.params.query["message"]
     game.message(message, player.username)
+    "OK"
 end

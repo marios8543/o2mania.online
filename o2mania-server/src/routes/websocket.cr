@@ -10,10 +10,6 @@ def enter_game(props, socket)
     return {player_id, game_id}
 end
 
-def leave_game(player_id, game_id)
-    GAMES[game_id].remove_player player_id
-end
-
 ws "/socket" do |socket, ctx|
     client = ConnectedClient.add_client(socket, ctx)
 

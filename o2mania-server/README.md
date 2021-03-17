@@ -1,27 +1,88 @@
 # o2mania-server
 
-TODO: Write a description here
+Server component of the o2mania.online game. Everything is written in Crystal with Kemal
 
-## Installation
+# Documentation
 
-TODO: Write installation instructions here
+## Game HTTP Routes
+### The strings after **?** are query parameters.
 
-## Usage
+* **GET** `/game/create` ? `name`
+    * 200 - JSON Response: `{"gameid": game.id}`
+* **GET** `/game/give_host` ? `gameid`, `playerid`, `giveusername`
+    * 200 - Plain text: `OK`
+    * 404 - Plain text: `no_can_give` The giveusername is invalid
+    * 403 - Plain text: `not_host`
+    * 500 - Plain text: Some other error, usually related to invalid gameid/playerid
+* **GET** `/game/set_song` ? `gameid`, `playerid`, `songid`
+    * 200 - Plain text: `OK`
+    * 404 - Plain text: `invalid_song`
+    * 403 - Plain text: `not_host`
+    * 500 - Plain text: Some other error, usually related to invalid gameid/playerid
+* **GET** `/game/change_team` ? `gameid`, `playerid`, `team`
+    * 200 - Plain text: `OK`
+    * 500 - Plain text: Some other error, usually related to invalid gameid/playerid
+            Maybe team is not a number or it's not in range [0, 7] ?
+* **GET** `/game/message` ? `gameid`, `playerid`, `message`
+    * 200 - Plain text: `OK`
+    * 500 - Plain text: Some other error, usually related to invalid gameid/playerid
 
-TODO: Write usage instructions here
+## Game WebSocket Events
+### All messages here, both sent and received, are JSON encoded and follow more or less the same structure (t: message type, d: payload).
 
-## Development
+#### **Join/Leave messages (What you should send)**
+>{\
+>  "t" : "join_game", \
+>  "d" : { \
+>    "game_id" : "b96b09f728dab6eafa7fc50668c4c95b",\
+>    "username" : "funne"\
+>  }\
+>}
 
-TODO: Write development instructions here
+>{\
+>  "t" : "leave_game"\
+>}
 
-## Contributing
+#### **In-game events (What you will receive)**
+ Updates the state of a player.
+>{\
+>  "t" : "player", \
+>  "d" : { \
+>    "username" : "funne",\
+>    "is_host" : true | false\
+>    "team" : 0-7\
+>  }\
+>}
 
-1. Fork it (<https://github.com/your-github-user/o2mania-server/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+ Removes a player.
+>{\
+>  "t" : "player_rm", \
+>  "d" : { \
+>    "username" : "funne",\
+>    "is_host" : true | false\
+>    "team" : 0-7\
+>  }\
+>}
 
-## Contributors
+ Changes the current lobby song.
+>{\
+>  "t" : "song", \
+>  "d" : { \
+>    "id" : "o2maXXX",\
+>    "bpm" : 170.0,\
+>    "genre" : 0-10,\
+>    "title" : "Ching Cheng Hanji",\
+>    "artist" : "Kim Jong Un",\
+>    "noter" : "NPC #754964",\
+>    "times" : [130, 130, 130]\
+>  }\
+>}
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+ A chat message.
+>{\
+>  "t" : "message", \
+>  "d" : { \
+>    "author" : "funne",\
+>    "content" : "Im retarded lole"\
+>  }\
+>}

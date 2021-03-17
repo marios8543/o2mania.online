@@ -34,9 +34,9 @@
               <div class="playerRow">
                 <div class="grid grid-cols-4">
                   <div v-for="i in 8">
-                    <div v-if="players[i-1]">
-                      <player-box v-bind:ref="'player'+(i-1)" v-bind:team="players[i-1].team"
-                        v-bind:username="players[i-1].getDisplay()" v-bind:profilepic="players[i-1].profile_pic">
+                    <div v-if="players[Object.keys(players)[i]]">
+                      <player-box v-bind:ref="'player_'+(Object.keys(players)[i])" v-bind:team="players[Object.keys(players)[i]].team"
+                        v-bind:username="players[Object.keys(players)[i]].getDisplay()" v-bind:profilepic="players[Object.keys(players)[i]].profile_pic">
                       </player-box>
                     </div>
                     <div v-else>
@@ -66,7 +66,8 @@
               </div>
               <div class="speedSelectBox">
                 <span class="font-extrabold text-4xl text-white">♫</span>
-                <button v-on:click="selectSong = true" v-bind:disabled="!isHost" class="selectMusicButton">Select Music</button>
+                <button v-on:click="selectSong = true" v-bind:disabled="!isHost" class="selectMusicButton">Select
+                  Music</button>
               </div>
             </div>
           </div>
@@ -84,9 +85,13 @@
         </div>
       </div>
     </div>
-    <song-select v-if="selectSong" v-on:close="selectSong = false" v-on:changesong="changeSong" ref="songSelect" v-bind:resources="resources"></song-select>
+    <song-select v-if="selectSong" v-on:close="selectSong = false" v-on:changesong="changeSong" ref="songSelect"
+      v-bind:resources="resources"></song-select>
   </div>
-  <script>const CDN = "https://cdn.o2mania.online/file/o2mania";</script>
+  <script>
+    const CDN = "https://cdn.o2mania.online/file/o2mania";
+    const API = "api.o2mania.online";
+  </script>
   <script src="https://cdn.o2mania.online/file/o2mania/static/js/vue.js"></script>
   <script src="resources/skin/skin.js"></script>
   <script src="js/Components/ChartPlayer/Renderer.js"></script>

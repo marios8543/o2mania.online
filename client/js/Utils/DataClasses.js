@@ -1,9 +1,10 @@
 class Player {
-    constructor(username, profile_pic, level, team) {
-        this.username = username;
-        this.profile_pic = profile_pic;
-        this.level = level;
-        this.team = team
+    constructor(data) {
+        this.username = data.username;
+        this.profile_pic = "https://sh.tzatzikiweeb.moe/mikuspin.gif";
+        this.level = 1;
+        this.team = data.team
+        this.is_host = data.is_host
     }
 
     getDisplay() {

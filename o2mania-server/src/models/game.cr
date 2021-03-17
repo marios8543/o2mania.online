@@ -40,19 +40,20 @@ class Game
         p = Player.new(websocket, username, id)
         @players[p.id] = p
         send_players
+        broadcast({"t" => "song", "d" => @song.to_hash})
         message(p.username + " joined the game!")
         return p.id
     end
 
     def remove_player(id)
-        broadcast({"t" => "player_remove", "d" => @players[id].to_hash})
+        broadcast({"t" => "player_rm", "d" => @players[id].to_hash})
         message(@players[id].username + " left the game!")
         @players.delete id
     end
 
     def set_song(id)
         @song = Song.from_id id
-        broadcast({"t" => "change_song", "d" => @song.to_hash})
+        broadcast({"t" => "song", "d" => @song.to_hash})
     end
 
     def set_player_team(player : Player, team : Int32)

@@ -32,7 +32,7 @@ class Song
         if res.is_a?(JSON::Any)
             self.new res
         else
-            raise "Invalid song ID"
+            raise "invalid_song"
         end
     end
 
