@@ -27,6 +27,10 @@ class Game
         end
     end
 
+    def send_game
+        broadcast({"t" => "game", "d" => {"name" => @name, "song" => @song.to_hash}})
+    end
+
     def message(content : String, author = "System")
         broadcast({"t" => "message", "d" => {"author" => author, "content" => content}})
     end
@@ -38,9 +42,12 @@ class Game
             end
         end
         p = Player.new(websocket, username, id)
+        if @players.size == 0
+            p.is_host = true
+        end
         @players[p.id] = p
         send_players
-        broadcast({"t" => "song", "d" => @song.to_hash})
+        send_game
         message(p.username + " joined the game!")
         return p.id
     end
@@ -53,10 +60,10 @@ class Game
 
     def set_song(id)
         @song = Song.from_id id
-        broadcast({"t" => "song", "d" => @song.to_hash})
+        send_game
     end
 
-    def set_player_team(player : Player, team : Int32)
+    def set_player_team(player, team)
         if team > 7 || team < 0
             raise "Invalid team"
         end

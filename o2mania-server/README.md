@@ -64,17 +64,20 @@ Server component of the o2mania.online game. Everything is written in Crystal wi
 >  }\
 >}
 
- Changes the current lobby song.
+ Updates the state of the game/lobby.
 >{\
->  "t" : "song", \
+>  "t" : "game", \
 >  "d" : { \
->    "id" : "o2maXXX",\
->    "bpm" : 170.0,\
->    "genre" : 0-10,\
->    "title" : "Ching Cheng Hanji",\
->    "artist" : "Kim Jong Un",\
->    "noter" : "NPC #754964",\
->    "times" : [130, 130, 130]\
+>       "name" : "Lobby name"\
+>       "song" : {\
+>           "id" : "o2maXXX",\
+>           "bpm" : 170.0,\
+>           "genre" : 0-10,\
+>           "title" : "Ching Cheng Hanji",\
+>           "artist" : "Kim Jong Un",\
+>           "noter" : "NPC #754964",\
+>           "times" : [130, 130, 130]\
+>       }\
 >  }\
 >}
 

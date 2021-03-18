@@ -51,6 +51,17 @@ get "/game/set_song" do |ctx|
     end
 end
 
+get "/game/set_room_name" do |ctx|
+    game, player = get_info ctx
+    room_name = ctx.params.query["name"]
+    if player.is_host
+        game.name = room_name
+        "OK"
+    else
+        ctx.response.respond_with_status(403, "not_host")
+    end
+end
+
 get "/game/change_team" do |ctx|
     game, player = get_info ctx
     team = ctx.params.query["team"]

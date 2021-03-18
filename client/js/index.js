@@ -8,6 +8,8 @@ const app = new Vue({
     data: {
         resources: CDN,
         username: "tza",
+        playerId: "",
+        gameId: "",
         ws: new WebSocket(`wss://${API}/socket`),
 
         roomName: "",
@@ -18,23 +20,33 @@ const app = new Vue({
 
         selectSong: false,
         currentSong: {},
-        players: {},
+        players: [],
+        messageInput: "",
         messages: []
     },
     methods: {
-        handleWsMessage: function(msg) {
-            console.log(msg)
-            let data = JSON.decode(msg);
+        onWsMessage: function(msg) {
+            let data = JSON.parse(msg.data);
             let payload = data.d;
             switch(data.t) {
+                case "auth":
+                    this.playerId = payload.player_id;
+                    this.gameId = payload.game_id;
+                    break;
                 case "player":
-                    this.players[payload.username] = Player(payload);
+                    p = new Player(payload);
+                    let idx = this.players.findIndex(el => el.username == p.username);
+                    if (idx != -1) this.players[idx] = p;
+                    else this.players.push(p);
+                    this.$forceUpdate();
+                    if(p.username == this.username) this.isHost = p.is_host;
                     break;
                 case "player_rm":
                     delete this.players[payload.username];
                     break;
-                case "song":
-                    this.currentSong = payload;
+                case "game":
+                    this.roomName = payload.name;
+                    this.currentSong = payload.song;
                     break;
                 case "message":
                     this.messages.push(payload);
@@ -42,16 +54,47 @@ const app = new Vue({
                 default:
                     break;
             }
+        },
+        changeTeam: function(name) {
+            let idx = Object.keys(this.TeamColors).indexOf(name)
+            fetch(`https://${API}/game/change_team?${
+                new URLSearchParams({
+                    gameid: this.gameId,
+                    playerid: this.playerId,
+                    team: idx
+                })
+            }`);
+        },
+        changeSong: function(song) {
+            fetch(`https://${API}/game/set_song?${
+                new URLSearchParams({
+                    gameid: this.gameId,
+                    playerid: this.playerId,
+                    songid: song.id
+                })
+            }`);
+        },
+        changeRoomName: function() {
+            fetch(`https://${API}/game/set_room_name?${
+                new URLSearchParams({
+                    gameid: this.gameId,
+                    playerid: this.playerId,
+                    name: this.roomName
+                })
+            }`);
+        },
+        sendMessage: function() {
+            fetch(`https://${API}/game/message?${
+                new URLSearchParams({
+                    gameid: this.gameId,
+                    playerid: this.playerId,
+                    message: this.messageInput
+                })
+            }`);
+            this.messageInput = "";
         }
     },
     mounted: function() {
-        this.ws.on_message = this.handleWsMessage;
-        let _this = this;
-        fetch(`${CDN}/charts/charts.json`).then(resp => {
-            resp.json().then(json => {
-                _this.songList = json;
-                _this.selectedSong = json.filter(i => i.genre == this.currentGenre)[0];
-            });
-        });
+        this.ws.addEventListener('message', this.onWsMessage);
     }
 });

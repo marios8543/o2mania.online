@@ -4,9 +4,6 @@ def enter_game(props, socket)
     game_id = props["game_id"].to_s
     username = props["username"].to_s
     player_id = GAMES[game_id].add_player(socket, username)
-    if GAMES[game_id].players.size == 1
-        GAMES[game_id].players[player_id].is_host = true
-    end
     return {player_id, game_id}
 end
 
@@ -27,7 +24,7 @@ ws "/socket" do |socket, ctx|
                 end
                 player_id, game_id = enter_game(payload["d"], client)
                 in_game = true
-                socket.send({"player_id" => player_id}.to_json)
+                socket.send({"t" => "auth", "d" => {"player_id" => player_id, "game_id" => game_id}}.to_json)
             when "leave_game"
                 if !in_game
                     raise "not_in_game"

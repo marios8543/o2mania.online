@@ -195,6 +195,12 @@ button:hover {
   margin-left: 5%;
 }
 
+.hostImage {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+}
+
 .playerBoxUsername {
   height: 15%;
   color: white;
